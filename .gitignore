@@ -39,4 +39,5 @@ Makefile.in
 /src/frontend/mm-webreplay
 /src/frontend/mm-replayserver
 /src/frontend/findcacheable
+/src/frontend/iscacheable
 /src/frontend/.libs
