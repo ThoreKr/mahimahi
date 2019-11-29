@@ -1,1 +1,5 @@
-mahimahi: a web performance measurement toolkit
+$ cd mahimahi
+$ ./autogen.sh
+$ ./configure
+$ make
+$ ./src/frontend/findcacheable <mahimahi_dir_path>/
