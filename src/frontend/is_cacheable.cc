@@ -40,9 +40,7 @@ int date_diff( const string & date1, const string & date2 )
     auto tp_date2 = chrono::system_clock::from_time_t( mktime( &tm_date2 ) );
     time_t tt_date2 = chrono::system_clock::to_time_t( tp_date2 );
 
-    cerr << "date1: " << date1 << " date2: " << date2 << " diff: " << difftime( tt_date1, tt_date2) << " times: " << tt_date1 << " " << tt_date2 << endl;
     return difftime( tt_date1, tt_date2 );
-    //return int(diff);
 }
 
 int get_cache_value( const string & cache_header, const string & value_to_find )
@@ -72,7 +70,9 @@ int main( int argc, char *argv[] )
         }
 
         string filename = argv[ 1 ];
-
+        // total counts for objects and cacheable objects
+        int total_obj = 0;
+        int total_js = 0;
         FileDescriptor fd( SystemCall( "open", open( filename.c_str(), O_RDONLY ) ) );
         MahimahiProtobufs::RequestResponse curr;
         if ( not curr.ParseFromFileDescriptor( fd.fd_num() ) ) {
@@ -85,7 +85,6 @@ int main( int argc, char *argv[] )
         string date_sent = "";
         string last_modified = "";
         total_obj = total_obj + 1;
-        bool is_js = false;
         for ( int v = 0; v < old_one.header_size(); v++ ) {
             HTTPHeader curr_header( old_one.header(v) );
             if ( HTTPMessage::equivalent_strings( curr_header.key(), "Date" ) ) {
@@ -97,7 +96,6 @@ int main( int argc, char *argv[] )
             if ( HTTPMessage::equivalent_strings( curr_header.key(), "Content-Type" ) ) {
                 if ( (curr_header.value().find("image") != string::npos) || (curr_header.value().find("png") != string::npos) || (curr_header.value().find("jpeg") != string::npos) || (curr_header.value().find("gif") != string::npos) ) {
                     total_js = total_js + 1;
-                    is_js = true;
                 }
             }
         }
@@ -171,12 +169,12 @@ int main( int argc, char *argv[] )
         // if cacheable, then print filename and freshness...if not cacheable, then just print filename and not-cacheable (or freshness=0)
         if ( cacheable ) {
             if ( freshness > 0 ) {
-                cout << "YES";
+                cout << "YES" << endl;
             } else {
-                cout <<"NO";
+                cout <<"NO" << endl;
             }
         } else {
-            cout <<"NO";
+            cout <<"NO" << endl;
         }
 
     } catch ( const runtime_error & e ) {
